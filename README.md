@@ -1,2 +1,2 @@
 # StudInfo
-An ASP.NET Core MVC application that Stores Student info, process scores and display result
+An ASP.NET Core MVC application that stores student info, processes scores and display report
