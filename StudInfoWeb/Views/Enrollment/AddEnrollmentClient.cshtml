@@ -1,0 +1,530 @@
+﻿@model StudInfoModel.ViewModels.EnrollmentVM
+
+@{
+    ViewData["Title"] = "Add Score";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="border col-10 p-3 mt-3 text-center">
+
+    <form method="post">
+
+        <div class="row mb-6">
+            <h2>Enroll Courses</h2>
+        </div>
+
+        <div class="row border-1">
+
+
+            @*
+            this commented snippet of code is meant to access querystring parameters from the View
+
+            @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+            @{
+            var stdnos = httpContextAccessor.HttpContext.Request.Query["studNos"];
+            var lev = httpContextAccessor.HttpContext.Request.Query["level"];
+            var sem = httpContextAccessor.HttpContext.Request.Query["semester"];
+            var grpcd = httpContextAccessor.HttpContext.Request.Query["grpCode"];
+
+            var temp = stdnos + " - " + lev + " - " + sem + " - " + grpcd;
+            }
+            <input type="text" id="temp" name="temp" value="@temp" hidden />*@
+
+
+            <input type="text" id="txtHidGroupCode" name="txtHidGroupCode" hidden />
+            <input type="text" id="txtHidStudNos" name="txtHidStudNos" hidden />
+
+            <div class="mb-2 col-6">
+                <label asp-for="Enrollment.StudNos"></label>
+                <input asp-for="Enrollment.StudNos" id="txtStudNos" name="txtStudNos" required class="form-control" />
+                <span asp-validation-for="Enrollment.StudNos" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="Enrollment.Level"></label>
+                <select asp-for="Enrollment.Level" id="ddlLevel" name="ddlLevel" required class="form-select"></select>
+                <span asp-validation-for="Enrollment.Level" class="text-danger"></span>
+            </div>
+            <div class="mb-2 col-6">
+                <label asp-for="Enrollment.Semester"></label>
+                <select asp-for="Enrollment.Semester" id="ddlSemester" name="ddlSemester" required class="form-select"></select>
+                <span asp-validation-for="Enrollment.Semester" class="text-danger"></span>
+            </div>
+
+            <div class="mt-4 col-6 text-end">
+                <button type="button" id="btnFind" onclick="Find()" class="btn btn-primary" style="width:150px;">Find</button>
+            </div>
+        </div>
+
+
+        <div id="divDetails">
+
+            <div id="divTable" class="border-1">
+                <div id="divTopAddNew" class="text-start mt-5">
+                    <button type="button" id="btnAddNewRow" onclick="addNewRow()" class="btn btn-outline-info" style="width:150px;">Add Row</button>
+                </div>
+
+                <table id="myTable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:85%">Course</th>
+                            <th style="width:15%"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="divButtons" class="row border-1">
+                <div class="text-start">
+                    <button type="button" id="btnAddNewRow2" onclick="addNewRow()" class="btn btn-outline-info" style="width:150px;">Add Row</button>
+                </div>
+
+                <div class="text-end">
+                    <button type="button" id="btnSave" onclick="Save()" class="btn btn-success" style="width:150px;">Save</button>
+                    <a class="btn btn-info" asp-controller="Enrollment" asp-action="Index" style="width:150;">Back to List</a>
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+
+
+@section scripts {
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+
+
+        $(document).ready(function () {
+
+            $('#divDetails').hide()
+
+            ddlLevel = $('#ddlLevel')
+            ddlSemester = $('#ddlSemester')
+
+            loadDropDowns(ddlLevel, "/Enrollment/LoadLevels")
+            loadDropDowns(ddlSemester, "/Enrollment/LoadSemesters")
+
+            assignAndDisplayDetailsFromQryStr()
+
+            removeRow()
+
+        })
+
+
+
+
+        function assignAndDisplayDetailsFromQryStr() {
+
+            //get handle to controls
+            txtStudNos = $('#txtStudNos')
+            ddlLevel = $('#ddlLevel')
+            ddlSemester = $('#ddlSemester')
+            txtHidGroupCode = $('#txtHidGroupCode')
+            txtHidStudNos = $('#txtHidStudNos')     //for tracking bad intention
+
+            //retieves values from querystring and assign to respective elements
+            let stdNosFromQryStr = getQueryStringParameter("studNos");
+            let levelFromQryStr = getQueryStringParameter("level");
+            let semesterFromQryStr = getQueryStringParameter("semester");
+            let grpCodeFromQryStr = getQueryStringParameter("grpCode");
+
+            if (stdNosFromQryStr === undefined || levelFromQryStr === undefined ||
+                semesterFromQryStr === undefined || grpCodeFromQryStr === undefined) {
+                stdNosFromQryStr = ''
+                levelFromQryStr = ''
+                semesterFromQryStr = ''
+                grpCodeFromQryStr = ''
+            }
+
+            if (stdNosFromQryStr != '' && levelFromQryStr != '' &&
+                semesterFromQryStr != '' && grpCodeFromQryStr != '') {
+
+                txtStudNos.val(stdNosFromQryStr)
+                txtHidStudNos.val(stdNosFromQryStr)
+                txtHidGroupCode.val(grpCodeFromQryStr)
+
+                //delay assignment of data to ddlLevel & ddlSemester to allow the browser to be ready
+                setTimeout(function () {
+                    ddlLevel.val(levelFromQryStr)
+                    ddlSemester.val(semesterFromQryStr)
+                    $('#btnFind').trigger('click')
+                    $('#divDetails').show()
+                }, 400);
+            }
+
+        }
+
+
+
+        function loadDropDowns(ddl, dataUrl) {
+
+            $.ajax({
+                type: "POST",
+                url: dataUrl,
+                success: function (data) {
+                    ddl.empty()
+                    $.each(data, function () {
+                        //ddl.append($("<option></option>").val(this['value']).html(this['text']));
+                        ddl.append($("<option />").val(this.value).text(this.text));
+                    });
+                }
+            })
+
+        }
+
+
+
+
+        function getQueryStringParameter(Key) {
+            var url = window.location.href;
+            KeysValues = url.split(/[\?&]+/);
+            for (i = 0; i < KeysValues.length; i++) {
+                KeyValue = KeysValues[i].split("=");
+                if (KeyValue[0] == Key) {
+                    return KeyValue[1];
+                }
+            }
+        }
+
+
+
+        function addNewRow() {
+
+            //if ($('#txtStudNos').val() == '' || $('#ddlLevel').val() == '' || $('#ddlSemester').val() == '') {
+            //    removeAllRows()
+            //    $('#divDetails').hide()
+            //    toastr.error('Please, enter value for Student Number, Level and Semester')
+            //    return;
+            //}
+
+            var row = `
+                                <tr>
+                                    <td><select id="ddlCourseCode" name="ddlCourseCode" required class="form-select"></select></td>
+                                    <td><button type="button" id="btnRemoveRow" name="btnRemoveRow"  style="width:150px;" class="btn btn-danger">Remove Row</button>
+                                </tr>
+                            `
+
+            $("#myTable tbody").append(row);
+
+            PopulateCourseCodeDropdownByRow()
+        }
+
+
+        function PopulateCourseCodeDropdownByRow() {
+
+            lev = $('#ddlLevel').val(),
+                sem = $('#ddlSemester').val()
+
+            $('#myTable tbody tr').each(function (row, ele) {
+
+                let ddlCourseCode = $(this).find('select[id=ddlCourseCode]')
+
+                /* the two lines of code below, prevent dropdown values in top row(s) from loosing
+                their values when a new row is added i.e. prevents selected dropdown items in top
+                rows from resetting to the first item after a new row is added */
+                kant = $('#myTable tbody tr').length
+                if (row < (kant - 1)) return true
+
+                loadDropDownsForCourses(ddlCourseCode, lev, sem, "/Enrollment/LoadCoursesByLevelAndSemester")
+
+            });
+        }
+
+
+
+
+        function loadDropDownsForCourses(ddl, lev, sem, dataUrl) {
+            $.ajax({
+                type: "POST",
+                url: dataUrl,
+                data: { level: lev, semester: sem },
+                success: function (data) {
+                    ddl.empty()
+                    $.each(data, function () {
+                        //ddl.append($("<option></option>").val(this['value']).html(this['text']));
+                        ddl.append($("<option />").val(this.value).text(this.text));
+                    });
+                }
+            })
+        }
+
+
+        function removeRow() {
+            $(document).on("click", '.btn-danger', function () {
+                $(this).closest('tr').remove();
+            });
+        }
+
+
+        function removeAllRows() {
+            $("#myTable tbody tr").each(function () {
+                $(this).remove()
+            })
+        }
+
+
+        function hideDisabled() {
+            $("#divButtons").hide()
+            $("#divTopAddNew").hide()
+            $("#myTable").find("button,select").attr("disabled", true);
+            //$("#myTable").find("button").hide();
+        }
+
+
+        function showEnabled() {
+            $("#divButtons").show()
+            $("#divTopAddNew").show()
+            $("#myTable").find("button,select").attr("disabled", false);
+            //$("#myTable").find("button").show();
+        }
+
+
+
+        function Find() {
+
+            let txtStudNos = $('#txtStudNos').val()
+            let ddlLevel = $('#ddlLevel').val()
+            let ddlSemester = $('#ddlSemester').val()
+
+            if (txtStudNos == '' || ddlLevel == '' || ddlSemester == '') {
+                removeAllRows()
+                $('#divDetails').hide()
+
+                toastr.error('Please, enter value for Student Number, Level and Semester')
+                return;
+            }
+
+            $('#txtHidStudNos').val(txtStudNos)     //for tracking bad intention
+            //$('#divDetails').show()
+
+            //call server method for the search from the client
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("SearchEnrollmentFromClient")",   //"/Score/SearchEnrollmentFromClient",
+                data: { stdnos: txtStudNos, level: ddlLevel, semester: ddlSemester },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+
+                    removeAllRows()
+
+                    if (data.length > 0) {
+
+                        $.each(data, function () {
+                            addNewRow();
+                        })
+
+                        if (data[0].processed == 'p') {
+                            hideDisabled()
+                        }
+                        else {
+                            showEnabled()
+                        }
+
+
+                        //value for GroupCode is same for all data. Assign it to txtHidGroupCode
+                        $('#txtHidGroupCode').val(data[0].groupCode)
+
+                        //delay assignment of data to ddlCourseCode to allow the browser to be ready
+                        setTimeout(function () {
+                            $('#myTable tbody tr').each(function (i, ele) {
+                                let ddlCourseCode = $(this).find('select[id=ddlCourseCode] option[value="' + data[i].courseCode + '"]')
+                                ddlCourseCode.attr('selected', 'selected')
+                            })
+                        }, 300);
+
+
+                        $('#divDetails').show()
+                    }
+                    else {
+
+                        $('#txtHidGroupCode').val('')
+
+                        if (data.nos == 1) {
+                            removeAllRows()
+                            $('#divDetails').hide()
+                            toastr.error(data.msg)
+                            return
+                        }
+                        else if (data.nos == 2) {
+                            removeAllRows()
+                            $('#divDetails').show()
+                            addNewRow()
+                            showEnabled()
+                            return
+                        }
+                        else if (data.nos == 3) {
+                            removeAllRows()
+                            $('#divDetails').hide()
+                            toastr.success(data.msg)
+                            return
+                        }
+                    }
+                }
+            })
+        }
+
+
+
+        function setTableValue(ddata) {
+            //delay assignment of data to ddlCourseCode to allow the browser to be ready
+            $('#myTable tbody tr').each(function (i, ele) {
+                let ddlCourseCode = $(this).find('select[id=ddlCourseCode] option[value="' + ddata[i].courseCode + '"]')
+                ddlCourseCode.attr('selected', 'selected')
+            });
+        }
+
+
+
+
+        function Save() {
+
+            let txtStudNos = $('#txtStudNos').val()
+            let ddlLevel = $('#ddlLevel').val()
+            let ddlSemester = $('#ddlSemester').val()
+            let txtHidStudNos = $('#txtHidStudNos').val()
+
+            //txtHidGroupCode will be empty for new record. Will have value if existing data
+            let txtHidGroupCode = $('#txtHidGroupCode').val()
+
+            if (txtStudNos == '' || ddlLevel == '' || ddlSemester == '') {
+                toastr.error('Please, enter value for Student Number, Level and Semester')
+
+                removeAllRows()
+                $('#divDetails').hide()
+
+                return
+            }
+
+            if (txtHidStudNos == '') {
+                toastr.error('An error has occured, please contact the application vendor')
+                return
+            }
+
+            if (txtStudNos != txtHidStudNos) {
+                toastr.error('Student Nos altered. Save operation will not proceed. Please, re-select page from menu')
+                return;
+            }
+
+            //kant contains the nos of rows in myTable
+            var kant = $('#myTable tbody tr').length
+            if (kant <= 0) {
+                toastr.error('Save operation cannot proceed if row is not added')
+                $('#divDetails').hide()
+                return
+            }
+
+           // $('#divDetails').show()
+
+            enrollments = [];
+            var boolCourseNotSelected = false
+
+            $('#myTable tbody tr').each(function (row, ele) {
+
+                var enrollment = {}
+
+                let td = $(this).find('td')
+
+
+                enrollment.GroupCode = txtHidGroupCode
+
+                let ddlCourseCode = td.eq(0).find('select[id=ddlCourseCode]').val()
+                enrollment.CourseCode = ddlCourseCode
+
+                if (ddlCourseCode == '') {
+                    boolCourseNotSelected = true    //set this to track exit from a loop
+                    toastr.error('Please, ensure you select a course in each row')
+                    return false
+                }
+
+                enrollment.StudNos = txtStudNos
+                enrollment.Level = ddlLevel
+                enrollment.Semester = ddlSemester
+
+
+                enrollments.push(enrollment)
+
+            });
+
+            //if boolCourseNotSelected = true, it mean exit from a loop, therefore exit from the method as well
+            //doing this prevent the error message below from showing when a course is not selected
+            if (boolCourseNotSelected == true) {
+                boolCourseNotSelected = false   //set it to false before exiting the method
+                return
+            }
+
+            if (JSON.stringify(enrollments) === '[]') {
+                toastr.error('An error has ocurred. Please contact the administrator')
+                return;
+            }
+
+            //find duplicates course at the client side for enrollments
+            var result = findDup(enrollments)
+            if (result == true) {
+                toastr.error('A course is selected more than once in the table. Select each course once. ')
+                return
+            }
+
+            //assign enrollments array to Enrollments property of the enrollmentVM object
+            var enrollmentVM = {};
+            enrollmentVM.Enrollments = enrollments;
+
+            //send enrollmentVM object to server
+            sendArrayToServer(enrollmentVM)
+        }
+
+
+
+        function findDup(arrObj) {
+            var valueArr = arrObj.map(function (item) { return item.CourseCode });
+
+            var isDuplicate = valueArr.some(function (item, idx) {
+                return valueArr.indexOf(item) != idx
+            });
+
+            return isDuplicate;
+        }
+
+
+
+        function sendArrayToServer(enrolVM) {
+            $.ajax({
+                type: "POST",
+                url: "/Enrollment/SaveEnrollment",
+                data: JSON.stringify(enrolVM),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data.nos == '1' || data.nos == '2' || data.nos == '3' || data.nos == '4') {
+                        removeAllRows()
+                        $('#divDetails').hide()
+                        toastr.error(data.msg)
+                        return;
+                    }
+
+                    if (data.nos == 5) {
+                        toastr.success(data.msg)
+                    }
+
+                    setTimeout(function () {
+                        window.location = '/Enrollment'
+                    }, 1000)
+
+                }
+            });
+        }
+
+
+    </script>
+
+}

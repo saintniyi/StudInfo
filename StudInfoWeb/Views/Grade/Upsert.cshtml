@@ -1,0 +1,95 @@
+﻿@model StudInfoModel.Grade
+
+@{
+    ViewData["Title"] = "Create Grade";
+}
+
+<form method="post">
+    <div class="border-2 p-3 mt-3 col-10 text-center">
+
+        <input asp-for="@Model.Id" hidden />
+
+        <div class="row mb-5">
+            @if (@Model.Id == 0)
+            {
+                <h2 class="ms-4">Create Grade</h2>
+            }
+            else
+            {
+                <h2 class="ms-4">Edit Grade</h2>
+            }
+        </div>
+
+        <div class="row">
+            @if (Model.Id == 0)
+            {
+                <div class="mb-3 col-6">
+                    <label asp-for="@Model.GradeLetter"></label>
+                    <input asp-for="@Model.GradeLetter" id="txtGradeLetter" class="form-control" />
+                    <span asp-validation-for="@Model.GradeLetter" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <div class="mb-3 col-6">
+                    <label asp-for="@Model.GradeLetter"></label>
+                    <input asp-for="@Model.GradeLetter" id="txtGradeLetter" readonly class="form-control" />
+                    <span asp-validation-for="@Model.GradeLetter" class="text-danger"></span>
+                </div>
+            }
+
+            <div class="mb-2 col-6">
+                <label asp-for="@Model.MinScoreRange"></label>
+                <input asp-for="@Model.MinScoreRange" id="txtMinScore" class="form-control" />
+                <span asp-validation-for="@Model.MinScoreRange" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="@Model.MaxScoreRange"></label>
+                <input asp-for="@Model.MaxScoreRange" id="txtMaxScore" class="form-control" />
+                <span asp-validation-for="@Model.MaxScoreRange" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="@Model.Weight"></label>
+                <input asp-for="@Model.Weight" id="txtGPA" class="form-control" />
+                <span asp-validation-for="@Model.Weight" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mb-2 mt-4 text-end">
+
+            @if (Model.Id == 0)
+            {
+                <button type="submit" class="btn btn-primary" asp-controller="Grade" asp-action="Upsert" style="width:150px;">Save</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" asp-controller="Grade" asp-action="Upsert" style="width:150px;">Update</button>
+            }
+            <a class="btn btn-info" asp-controller="Grade" asp-action="Index" style="width:150px;">Back to List</a>
+
+        </div>
+
+
+    </div>
+</form>
+
+
+
+
+<script>
+
+
+    var selectedInput = null;
+    $(function () {
+        $('input').focus(function () {
+            selectedInput = this;
+            selectedInput.select()
+        }).blur(function () {
+            selectedInput = null;
+        });
+    });
+
+
+
+
+
+</script>

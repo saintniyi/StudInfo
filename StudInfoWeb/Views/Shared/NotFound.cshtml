@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Not Found";
+}
+
+@*@if(ViewData["ErrorMessage"] != null)
+{
+    <h1>ViewData["ErrorMessage"].ToString()</h1>
+}
+*@
+
+@*<h1>@ViewBag.Path</h1>
+
+<h1>@ViewBag.QS</h1>*@
+
+@if (ViewData["statusCode"].ToString() == "404")
+{
+    <h1>Error 404 - Resource Not found</h1>
+    <br />
+    <h5 class="text-danger">The resource you are looking for cannot be found.</h5>
+}
+else @if (ViewData["statusCode"].ToString() == "500")
+{
+    <h1>Error 500 - Internal Server Error</h1>
+    <br />
+    <h5 class="text-danger">A server error has occured. Please contact the vendor at: help@fixit.com</h5>
+}
+else
+{
+    <h1>Unknown Error</h1>
+    <br />
+    <h5 class="text-danger">A unknown error has occured. Please contact the vendor at: help@fixit.com</h5>
+}
+
+<a asp-action="index" asp-controller="home">
+    Click here to navigate to the home page
+</a>

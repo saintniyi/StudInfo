@@ -1,0 +1,50 @@
+﻿@model IEnumerable<StudInfoModel.Faculty>
+@{
+    ViewData["title"] = "Index";
+}
+
+<div class="container p-3">
+
+    <div class="row p-3 mt-3 mb-3">
+        <div class="col-6">
+            <h2>Faculty List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Faculty" asp-action="Create" 
+            class="btn btn-primary"><i class="bi bi-plus-circle"></i>&nbsp;Create New Faculty</a>
+        </div>
+    </div>
+
+    <div>
+        <table class="table table-bordered table-striped" width="100%">
+            <thead>
+                <tr>
+                    <th>Faculty Code</th>
+                
+                    <th>Faculty Name</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var itm in Model)
+                {
+                    <tr>
+                        <td  width="35%">@itm.FacultyCode</td>
+                        <td  width="35%">@itm.FacultyName</td>
+                        <td>
+                            <div class="text-end">
+                                <a asp-controller="Faculty" asp-action="Edit" asp-route-fac_code="@itm.FacultyCode" 
+                                class="btn btn-primary"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
+                                <a asp-controller="Faculty" asp-action="Delete" asp-route-fac_code="@itm.FacultyCode" 
+                                class="btn btn-danger"><i class="bi bi-trash-fill"></i>&nbsp;Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+
+</div>

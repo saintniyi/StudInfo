@@ -1,0 +1,120 @@
+﻿@model PagingList<StudInfoModel.Dept>
+@*@model IEnumerable<StudInfoModel.Dept>*@
+
+@{
+    ViewData["title"] = "Index";
+}
+
+<div class="container p-3">
+
+    <div class="row p-3 mt-3 mb-3">
+        <div class="col-6">
+            <h2>Dept List</h2>
+        </div>
+
+        <div class="col-6 text-end">
+            <a asp-controller="Dept" asp-action="Upsert"
+               class="btn btn-primary"><i class="bi bi-plus-circle"></i>&nbsp;Create New dept</a>
+        </div>
+    </div>
+
+    <div class="mt-2 mb-3">
+        <form class="row g-3" asp-controller="Dept" method="post">
+            <div class="col-auto">
+                <input class="form-control" type="text" name="searchString" placeholder="search by any field value" />
+            </div>
+            <div class="col-auto">
+                <input type="submit" value="Filter" class="btn btn-info text-end" asp-action="Index" />
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <table class="table table-bordered table-striped" width="100%">
+            <thead>
+                <tr>
+
+                    @*<th>
+                    @Html.ActionLink("Dept Code", "Index", new { sortField = "DeptCode", currentSortField = ViewBag.SortField, currentSortOrder = ViewBag.SortOrder, currentFilter = ViewBag.CurrentFilter  })
+                    </th>
+                    <th>
+                    @Html.ActionLink("Dept Name", "Index", new { sortField = "DeptName", currentSortField = ViewBag.SortField, currentSortOrder = ViewBag.SortOrder, currentFilter = ViewBag.CurrentFilter  })
+                    </th>
+                    <th>
+                    @Html.ActionLink("Faculty", "Index", new { sortField = "Faculty", currentSortField = ViewBag.SortField, currentSortOrder = ViewBag.SortOrder, currentFilter = ViewBag.CurrentFilter  })
+                    </th>*@
+
+                    @*OR*@
+
+                    <th>
+                        <a asp-action="Index" as asp-route-sortField="DeptCode" asp-route-currentSortField="@ViewBag.SortField" asp-route-currentSortOrder="@ViewBag.SortOrder">
+                            Dept Code
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" as asp-route-sortField="DeptName" asp-route-currentSortField="@ViewBag.SortField" asp-route-currentSortOrder="@ViewBag.SortOrder">
+                            Dept Name
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-action="Index" as asp-route-sortField="Faculty" asp-route-currentSortField="@ViewBag.SortField" asp-route-currentSortOrder="@ViewBag.SortOrder">
+                            Faculty
+                        </a>
+                    </th>
+
+
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var itm in Model)
+                {
+                    <tr>
+                        <td width="15%">@itm.DeptCode</td>
+                        <td width="35%">@itm.DeptName</td>
+                        <td width="25%">@itm.Faculty.FacultyName</td>
+                        <td>
+                            <div class="text-end">
+                                <a asp-controller="Dept" asp-action="Upsert" asp-route-ID="@itm.ID"
+                               class="btn btn-primary"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
+
+                                <a asp-controller="Dept" asp-action="Delete" asp-route-ID="@itm.ID"
+                               class="btn btn-danger"><i class="bi bi-trash-fill"></i>&nbsp;Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+    <br />
+
+    @{
+        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+        var totalPageNo = Model.TotalPageNo;
+        var currentPageNo = Model.PageIndex;
+    }
+
+    <a asp-action="Index"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-pageNo="@(Model.PageIndex - 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn btn-default @prevDisabled">
+        Previous
+    </a>
+    <a asp-action="Index"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-pageNo="@(Model.PageIndex + 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn btn-default @nextDisabled">
+        Next
+    </a>
+    <span>
+        Page No : @currentPageNo of @totalPageNo
+    </span>
+
+</div>
+

@@ -1,0 +1,63 @@
+﻿<div class="border col-10 p-3 mt-3 text-center">
+
+    <form method="post">
+
+        <div class="row mb-6">
+            <h2>Close Semester</h2>
+        </div>
+
+        <div class="row border-1">
+
+            <div class="mb-3 col-6">
+                <label for="ddlLevel"></label>
+                <select id="ddlLevel" name="ddlLevel" required class="form-select"></select>
+            </div>
+            <div class="mb-2 col-6">
+                <label for="ddlSemester"></label>
+                <select id="ddlSemester" name="ddlSemester" required class="form-select"></select>
+            </div>
+            <div class="mt-4 text-end">
+                <button type="submit" id="btnClose" class="btn btn-primary" asp-controller="Semester"
+                        asp-action="Close" style="width:150px">
+                    Close Semester
+                </button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        ddlLevel = $('#ddlLevel')
+        ddlSemester = $('#ddlSemester')
+
+
+        loadDropDowns(ddlLevel, "/Enrollment/LoadLevels")
+        loadDropDowns(ddlSemester, "/Enrollment/LoadSemesters")
+
+    })
+
+
+
+    function loadDropDowns(ddl, dataUrl) {
+        $.ajax({
+            type: "POST",
+            url: dataUrl,
+            success: function (data) {
+                ddl.empty()
+                $.each(data, function () {
+                    //ddl.append($("<option></option>").val(this['value']).html(this['text']));
+                    ddl.append($("<option />").val(this.value).text(this.text));
+                });
+            }
+        })
+
+    }
+
+</script>

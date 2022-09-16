@@ -1,0 +1,31 @@
+﻿@model StudInfoModel.Faculty
+
+@{
+    ViewData["Title"] = "Create Faculty";
+}
+
+<form method="post">
+    <div class="border p-3 mt-3">
+
+        <div class="row mb-5">
+            <h2>Create Faculty</h2>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="FacultyCode"></label>
+            <input asp-for="FacultyCode" class="form-control" />
+            <span asp-validation-for="FacultyCode" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="FacultyName"></label>
+            <input asp-for="FacultyName" class="form-control" />
+            <span asp-validation-for="FacultyName" class="text-danger"></span>
+        </div>
+        <div class="mb-2 text-end">
+            <button type="submit" class="btn btn-primary" asp-controller="Faculty" asp-action="Save" style="width:150px;">Save</button>
+            <a class="btn btn-info" asp-controller="Faculty" asp-action="Index"  style="width:150px;">Back to List</a>
+        </div>
+
+
+    </div>
+</form>

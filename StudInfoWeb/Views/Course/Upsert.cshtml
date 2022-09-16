@@ -1,0 +1,94 @@
+﻿@model StudInfoModel.ViewModels.CourseVM
+
+
+@{
+    ViewData["Title"] = "Create / Update Course";
+}
+
+<form method="post">
+
+    <input id="id_hid" asp-for=Course.Id hidden />
+
+    <div class="border p-3 mt-3">
+
+        <div class="row mb-2">
+            @if (Model.Course.Id == 0)
+            {
+                <h2>Create Course</h2>
+            }
+            else
+            {
+                <h2>Edit Course</h2>
+            }
+        </div>
+
+        <div class="mb-2">
+            @if (Model.Course.Id == 0)
+            {
+                <label asp-for="Course.CourseCode"></label>
+                <input id="cCode" asp-for="Course.CourseCode" class="form-control" />
+                <span asp-validation-for="Course.CourseCode" class="text-danger"></span>
+            }
+            else
+            {
+                <label asp-for="Course.CourseCode"></label>
+                <input asp-for="Course.CourseCode" readonly class="form-control" />
+                <span asp-validation-for="Course.CourseCode" class="text-danger"></span>
+            }
+        </div>
+        <div class="mb-3">
+            <label asp-for="Course.CourseName"></label>
+            <input asp-for="Course.CourseName" class="form-control" />
+            <span asp-validation-for="Course.CourseName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Course.CourseUnit"></label>
+            <input asp-for="Course.CourseUnit" class="form-control" id="cUnit" onclick="selectUnit();" />
+            <span asp-validation-for="Course.CourseUnit" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Course.DeptCode"></label>
+            <select asp-for="Course.DeptCode" asp-items="Model.DeptList" class="form-select">
+                <option disabled selected>--Select Dept--</option>
+            </select>
+            <span asp-validation-for="Course.DeptCode" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Course.Level"></label>
+            <select asp-for="Course.Level" asp-items="Model.LevelList" class="form-select">
+                <option disabled selected>--Select Level--</option>
+            </select>
+            <span asp-validation-for="Course.Level" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Course.Semester"></label>
+            <select asp-for="Course.Semester" asp-items="Model.SemesterList" class="form-select">
+                <option disabled selected>--Select Semester--</option>
+            </select>
+            <span asp-validation-for="Course.Semester" class="text-danger"></span>
+        </div>
+        <div class="mb-2 text-end">
+            @if (Model.Course.Id == 0)
+            {
+                <button type="submit" class="btn btn-primary" asp-controller="Course" asp-action="Upsert" style="width:150px;">Save</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" asp-controller="Course" asp-action="Upsert" style="width:150px;">Update</button>
+            }
+            <a class="btn btn-info" asp-controller="Course" asp-action="Index" style="width:150px;">Back to List</a>
+        </div>
+
+
+    </div>
+</form>
+
+
+<script>
+
+    
+function selectUnit() { 
+    document.getElementById("cUnit").select()
+}
+
+</script>

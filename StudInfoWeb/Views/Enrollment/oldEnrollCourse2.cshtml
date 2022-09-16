@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "UpsertRemove";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Create Enrollment</h2>
+        </div>
+        <div class="col-6 text-end">
+            <button type="button" id="btnAddRow"class="btn btn-primary"><i class="bi bi-plus-circle"></i>&nbsp;Add New Row</button>
+        </div>
+    </div>
+    <br /><br />
+
+    <table id="myTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>GroupCode</th>
+                <th>CourseCode</th>
+                <th>StudNos</th>
+                <th>Score</th>
+                <th>Level</th>
+                <th>Semester</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td><input type="text" class="form-control" id="txtGroupCode" name="txtGroupCode" /></td>
+                <td><input type="text" class="form-control" id="txtCourseCode" name="txtCourseCode" /></td>
+                <td><input type="text" class="form-control" id="txtStudNos" name="txtStudNos" /></td>
+                <td><input type="text" class="form-control" id="txtScore" name="txtScore" /></td>
+                <td><input type="text" class="form-control" id="txtLevel" name="txtLevel" /></td>
+                <td><input type="text" class="form-control" id="txtSemester" name="txtSemester" /></td>
+            </tr>
+        </tfoot>
+
+    </table>
+
+
+    <br />
+    <input type="button" id="btnSave" value="Save All" />
+
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+$("body").on("click", "#btnAddRow", function () {
+    //Reference the Name and Country TextBoxes.
+    var txtGroupCode = $("#txtGroupCode");
+    var txtCourseCode = $("#txtCourseCode");
+    var txtStudNos = $("#txtStudNos");
+    var txtScore = $("#txtScore");
+    var txtLevel = $("#txtLevel");
+    var txtSemester = $("#txtSemester");
+
+    //Get the reference of the Table's TBODY element.
+    var tBody = $("#myTable > tbody")[0];
+
+    //Add Row.
+    var row = tBody.insertRow(-1);
+
+    //Add GroupCode cell.
+    var cell = $(row.insertCell(-1));
+    cell.html(txtGroupCode.val());
+    //Add CourseCode cell.
+    cell = $(row.insertCell(-1));
+    cell.html(txtCourseCode.val());
+    //Add StudNos cell.
+    cell = $(row.insertCell(-1));
+    cell.html(txtStudNos.val());
+    //Add Score cell.
+    cell = $(row.insertCell(-1));
+    cell.html(txtScore.val());
+    //Add Level cell.
+    cell = $(row.insertCell(-1));
+    cell.html(txtLevel.val());
+    //Add Semester cell.
+    cell = $(row.insertCell(-1));
+    cell.html(txtSemester.val());
+
+    //Clear the TextBoxes.
+    txtGroupCode.val("");
+    txtCourseCode.val("");
+    txtStudNos.val("");
+    txtScore.val("");
+    txtLevel.val("");
+    txtSemester.val("");
+});
+
+
+$("body").on("click", "#btnSave", function () {
+    //Loop through the Table rows and build a JSON array.
+    var enrollments = new Array();
+    $("#myTable tbody tr").each(function () {
+        var row = $(this);
+        var enrollment = {};
+        enrollment.GroupCode = row.find("td").eq(0).html();
+        enrollment.CourseCode = row.find("td").eq(1).html();
+        enrollment.StudNos = row.find("td").eq(2).html();
+        enrollment.Score = row.find("td").eq(3).html();
+        enrollment.Level = row.find("td").eq(4).html();
+        enrollment.Semester = row.find("td").eq(5).html();
+        enrollments.push(enrollment);
+    });
+
+    //Populate enrollment data
+    var enrollmentVM = {};
+    enrollmentVM.Enrollments = enrollments;
+    jsonData = JSON.stringify(enrollmentVM)
+
+    //Send the JSON array to Controller using AJAX.
+    $.ajax({
+        type: "POST",
+            url: "/Enrollment/SaveEnrollment",
+        data: jsonData,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (r) {
+            alert(r + " record(s) inserted.");
+        }
+    });
+});
+</script>

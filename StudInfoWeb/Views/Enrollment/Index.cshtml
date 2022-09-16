@@ -1,0 +1,83 @@
+﻿@model IEnumerable<StudInfoModel.Enrollment>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Enrollment List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Enrollment" asp-action="AddEnrollmentClient" class="btn btn-info">
+        <i class="bi bi-plus-circle"></i> &nbsp; Create New Enrollment
+        </a>
+        </div>
+    </div>
+    <br /><br />
+
+    <table id="tblEnrollment" class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Group Code
+                <th>Student Number</th>
+                <th>Level</th>
+                <th>Semester</th>
+                <th></th>
+
+            </tr>
+        </thead>
+
+
+    </table>
+</div>
+
+
+
+@section Scripts{
+
+
+    <script>
+
+        var dataTable;
+
+        $(document).ready(function() {
+            loadEnrollmentTable();
+        })
+
+
+
+        function loadEnrollmentTable() {
+            dataTable = $("#tblEnrollment").DataTable({
+                //Processing: true,
+                //serverSide: true,
+                ajax: "/Enrollment/GetAllDistinctEnrollments",
+                columns: [
+                    { data: "groupCode" },
+                    { data: "studNos" },
+                    { data: "level" },
+                    { data: "semester" },
+                    {
+                        data: "studNos",
+                        render: function(data, type, row, meta) {
+                            return `
+
+                                    <div class="w-75 btn-group" role="group">
+
+                                        <a href="/Enrollment/EnrollmentDetailsFromQryStr?studNos=${data}&level=${row.level}&semester=${row.semester}&grpCode=${row.groupCode}"
+                                        class="btn btn-primary mx-2" style="width:100px"> <i class="bi bi-pencil-square"></i>&nbsp;View Details</a>
+
+                                    </div>
+                                `
+                        }
+                    }
+                ]
+            })
+        }
+
+    </script>
+
+
+}

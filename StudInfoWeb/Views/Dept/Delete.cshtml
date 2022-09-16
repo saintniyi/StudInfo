@@ -1,0 +1,102 @@
+﻿@model StudInfoModel.ViewModels.DeptVM
+
+@{
+    ViewData["Title"] = "Delete Dept";
+}
+
+<form method="post">
+
+    <input id="Dept_ID" asp-for="Dept.ID" hidden />
+
+    <div class="border p-3 mt-3">
+
+        <div class="row mb-5">
+            <h2>Delete Dept</h2>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Dept.DeptCode"></label>
+            <input asp-for="Dept.DeptCode" readonly class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Dept.DeptName"></label>
+            <input asp-for="Dept.DeptName" readonly class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Dept.FacultyCode"></label>
+            <select asp-for="Dept.FacultyCode" disabled asp-items="Model.FacultyList" class="form-select">
+                <option disabled selected>--Select Faculty--</option>
+            </select>
+        </div>
+        <div class="mb-2 text-end">
+            @*<button id="btnDelete" type="submit" class="btn btn-primary" asp-controller="Dept" asp-action="DeletePost" style="width:150px;">Delete</button>*@
+
+            <button id="btnRemove" class="btn btn-primary"><i class="bi bi-trash-fill"></i>&nbsp;Remove</button>
+
+            <a class="btn btn-info" asp-controller="Dept" asp-action="Index" style="width:150;">Back to List</a>
+        </div>
+
+
+    </div>
+</form>
+
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+
+
+    function showAlert() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                id = $("#Dept_ID").val()
+                Remove(id)
+            }
+        })
+    }
+
+
+    function Remove(id) {
+        $.ajax({
+				url: "@Url.Action("RemoveDept")",
+                type: 'DELETE',
+				data: {ID: id},
+				success: function(result){
+                    if (result.success == true) {
+                        toastr.success(result.message)
+                        indexUrl = '@Url.Action("Index", "Dept")'
+                        window.setTimeout(function() { location.href=indexUrl }, 2000 ) //window.location.href=indexUrl
+                    }
+                    else {
+                        toastr.error('Error occurred. Contact the application administrator.')
+                    }
+				},
+				error: function(req, status, error){
+					console.log(status)
+				}
+			})
+    }
+
+
+
+    $(document).ready(function() {
+
+        $("#btnRemove").click(function(e) {
+            e.preventDefault();
+            showAlert();
+        })
+
+    })
+
+
+</script>

@@ -1,0 +1,77 @@
+﻿@model StudInfoModel.ViewModels.UserRolesVM
+
+@{
+    ViewData["Title"] = "Users and Roles";
+}
+
+<div class="border col-10 p-3 mt-3 text-center">
+
+    <form method="post">
+
+        <div class="row mb-6">
+            <h2>User & Roles</h2>
+        </div>
+
+        @*@Html.HiddenFor(u => u.AppUser.Id)*@
+        <input asp-for="@Model.AppUser.Id" hidden class="form-control" />
+
+        <div class="row border-1">
+
+            <div class="mb-2">
+                <label asp-for="AppUser.Email"></label>
+                <input asp-for="AppUser.Email" class="form-control" />
+                <span asp-validation-for="AppUser.Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="AppUser.FirstName"></label>
+                <input asp-for="AppUser.FirstName" class="form-control" />
+                <span asp-validation-for="AppUser.FirstName" class="text-danger"></span>
+            </div>
+            <div class="mb-2 col-6">
+                <label asp-for="AppUser.LastName"></label>
+                <input asp-for="AppUser.LastName" class="form-control" />
+                <span asp-validation-for="AppUser.LastName" class="text-danger"></span>
+            </div>
+            
+        </div>
+
+        <div id="divRoles" class="row mt-5 border-2">
+
+            <div id="innerDiv" class="border-1 text-start">
+
+                @for (int k = 0; k < Model.RoleList.Count; k++)
+                {
+                    <div class="form-check">
+                        @if (Model.RoleList[k].Text.ToLower() == "admin")
+                        {
+                            @Html.CheckBoxFor(c => @Model.RoleList[k].Selected, new { @class ="form-check", @readonly="true" } )
+                        }
+                        else
+                        {
+                            @Html.CheckBoxFor(c => @Model.RoleList[k].Selected)
+                        }
+                        
+                        @Html.HiddenFor(h => @Model.RoleList[k].Value)
+                        @Html.LabelFor(l => @Model.RoleList[k].Selected, @Model.RoleList[k].Text, new {@class="form-check-label"})
+                        @Html.HiddenFor(h => @Model.RoleList[k].Text)
+
+                       @* @Html.CheckBoxFor(m => m.RoleList[k].Selected)
+                        @Html.DisplayFor(m => m.RoleList[k].Text, new {@class="form-check-label"})
+                        @Html.HiddenFor(m => m.RoleList[k].Value)*@
+
+
+                    </div>
+                }
+
+            </div>
+
+            <div id="divButton" class="text-end">
+                <button type="submit" class="btn btn-primary" asp-controller="UserManagement" asp-action="Edit" style="width:150px;">Save</button>
+                <a class="btn btn-info" asp-controller="UserManagement" asp-action="Index" style="width:150px;">Back to List</a>
+            </div>
+
+        </div>
+
+    </form>
+
+</div>

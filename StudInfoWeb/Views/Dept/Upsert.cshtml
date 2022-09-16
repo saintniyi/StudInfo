@@ -1,0 +1,66 @@
+﻿@model StudInfoModel.ViewModels.DeptVM
+
+@{
+    ViewData["Title"] = "Create / Update Dept";
+}
+
+<form method="post">
+
+    <input asp-for="Dept.ID" hidden />
+
+    <div class="border p-3 mt-3">
+
+        <div class="row mb-5">
+            @if (Model.Dept.ID == 0)
+            {
+                <h2 class="ms-4">Create Dept</h2>
+            }
+            else
+            {
+                <h2 class="ms-4">Edit Dept</h2>
+            }
+        </div>
+        
+        <div class="mb-2">
+            @if (Model.Dept.ID == 0)
+            {
+                <label asp-for="Dept.DeptCode"></label>
+                <input asp-for="Dept.DeptCode" class="form-control" />
+                <span asp-validation-for="Dept.DeptCode" class="text-danger"></span>
+            }
+            else
+            {
+                <label asp-for="Dept.DeptCode"></label>
+                <input asp-for="Dept.DeptCode" readonly class="form-control" />
+                <span asp-validation-for="Dept.DeptCode" class="text-danger"></span>
+            }
+        </div>
+        <div class="mb-3">
+            <label asp-for="Dept.DeptName"></label>
+            <input asp-for="Dept.DeptName" class="form-control" />
+            <span asp-validation-for="Dept.DeptName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Dept.FacultyCode"></label>
+            <select asp-for="Dept.FacultyCode" asp-items="Model.FacultyList" class="form-select">
+                <option value="0" selected disabled>--Select Faculty--</option>
+            </select>
+            <span asp-validation-for="Dept.FacultyCode" class="text-danger"></span>
+        </div>
+        <div class="mb-2 text-end">
+            @if (Model.Dept.ID == 0)
+            {
+                <button type="submit" class="btn btn-primary" asp-controller="Dept" asp-action="Upsert" style="width:150;">Save</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" asp-controller="Dept" asp-action="Upsert" style="width:150;">Update</button>
+            }
+            <a class="btn btn-info" asp-controller="Dept" asp-action="Index" style="width:150;">Back to List</a>
+        </div>
+
+
+    </div>
+</form>
+
+

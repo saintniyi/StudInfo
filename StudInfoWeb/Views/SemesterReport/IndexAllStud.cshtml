@@ -1,0 +1,146 @@
+﻿@model StudInfoModel.ViewModels.ReportVM
+
+@{
+    ViewData["Title"] = "All Student Semester Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="border col-12 p-3 mt-3 text-center">
+
+    <form method="post">
+
+        <div class="row mb-6">
+            <h2>All Student Semester Report</h2>
+        </div>
+
+        <div class="row border-1">
+            <div class="mb-3 col-6">
+                <label asp-for="Score.Level"></label>
+                <select asp-for="Score.Level" id="ddlLevel" name="ddlLevel" required class="form-select"></select>
+                <span asp-validation-for="Score.Level" class="text-danger"></span>
+            </div>
+            <div class="mb-2 col-6">
+                <label asp-for="Score.Semester"></label>
+                <select asp-for="Score.Semester" id="ddlSemester" name="ddlSemester" required class="form-select"></select>
+                <span asp-validation-for="Score.Semester" class="text-danger"></span>
+            </div>
+            <div class="mt-4 col-6 text-end">
+                <button type="submit" id="btnSearch" class="btn btn-primary" asp-controller="SemesterReport" asp-action="SearchAll">
+                    Search
+                </button>
+            </div>
+
+        </div>
+
+
+        @if (Model.Scores.Any())
+        {
+            int kant = 0;
+
+            <div id="divDetails" hidden class="mt-5 border border-primary">
+
+                <div id="divTable">
+
+                    @{
+                        string strSemester = Model.Scores[0].Semester == 1 ? "First Semester" : "Second Semester";
+
+                        string strVar = Model.Scores[0].Level + " Level " + strSemester + " Report";
+                    }
+
+                    <br />
+                    <b><h3>@strVar</h3></b>
+                    <hr />
+                                       
+                    <div class="m-4">
+                        <table id="myTable">
+                            <tbody>
+
+                                
+
+                                @foreach (var item in Model.DistinctGroupCode)
+                                {
+                                    kant = kant + 1;
+                                    var studScores = Model.Scores.FindAll(x => x.GroupCode == item);
+                                    string aLine = "";
+
+                                    <tr>
+
+                                        @for (int k = 0; k < studScores.Count; k++)
+                                        {
+                                            aLine += studScores[k].StudNos + ": " + studScores[k].CourseCode + ": " + studScores[k].Mark + "   ";
+                                        }
+
+                                        <td class="text-start fs-6">
+                                            @kant) @aLine
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        }
+
+    </form>
+
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        ddlLevel = $('#ddlLevel')
+        ddlSemester = $('#ddlSemester')
+
+        loadDropDowns(ddlLevel, "/Enrollment/LoadLevels")
+        loadDropDowns(ddlSemester, "/Enrollment/LoadSemesters")
+
+        var vLevel = '@(ViewBag.Level)'
+        var vSemester = '@(ViewBag.Semester)'
+
+        //vStudNos, vLevel & vSemester has value if search is invoked with search button on the page
+        if (vLevel !== '' && vSemester !== '') {
+
+            setTimeout(function () {
+                $('#ddlLevel').val(vLevel)
+                $('#ddlSemester').val(vSemester)
+            }, 200)
+
+            kant = $('#myTable tbody tr').length
+
+            //if no data, hide the detailsdiv
+            if (kant > 0) {
+                $('#divDetails').attr('hidden', false)
+            }
+            else {
+                $('#divDetails').attr('hidden', true)
+            }
+        }
+
+    })
+
+
+
+    function loadDropDowns(ddl, dataUrl) {
+        $.ajax({
+            type: "POST",
+            url: dataUrl,
+            success: function (data) {
+                ddl.empty()
+                $.each(data, function () {
+                    //ddl.append($("<option></option>").val(this['value']).html(this['text']));
+                    ddl.append($("<option />").val(this.value).text(this.text));
+                });
+            }
+        })
+
+    }
+
+
+
+</script>

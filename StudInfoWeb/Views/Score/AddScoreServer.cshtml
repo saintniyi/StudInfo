@@ -1,0 +1,221 @@
+﻿@model StudInfoModel.ViewModels.ScoreVM
+
+
+@{
+    ViewData["Title"] = "Add Score";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="border col-10 p-3 mt-3 text-center">
+
+    <form method="post">
+
+        <div class="row mb-6">
+            <h2>Enter Scores</h2>
+        </div>
+
+        <div class="row border-1">
+
+
+
+            @* Access Querystring Values from the View. Values are used in document.ready method of jquery *@
+
+            @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+            @{
+                var stdnos = httpContextAccessor.HttpContext.Request.Query["studNos"];
+                var lev = httpContextAccessor.HttpContext.Request.Query["level"];
+                var sem = httpContextAccessor.HttpContext.Request.Query["semester"];
+                var grpcd = httpContextAccessor.HttpContext.Request.Query["grpCode"];
+
+                //var temp = stdnos + " - " + lev + " - " + sem + " - " + grpcd;
+            }
+
+            <input type="text" id="txtHidStudNos" name="txtHidStudNos" value="@stdnos" hidden />
+            <input type="text" id="txtHidLevel" name="txtHidLevel" value="@lev" hidden />
+            <input type="text" id="txtHidSemester" name="txtHidSemester" value="@sem" hidden />
+            <input type="text" id="txtHidGroupCode" name="txtHidGroupCode" value="@grpcd" hidden />
+
+            <div class="mb-2 col-6">
+                <label asp-for="Score.StudNos"></label>
+                <input asp-for="Score.StudNos" id="txtStudNos" name="txtStudNos" required class="form-control" />
+                <span asp-validation-for="Score.StudNos" class="text-danger"></span>
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="Score.Level"></label>
+                <select asp-for="Score.Level" id="ddlLevel" name="ddlLevel" required class="form-select"></select>
+                <span asp-validation-for="Score.Level" class="text-danger"></span>
+            </div>
+            <div class="mb-2 col-6">
+                <label asp-for="Score.Semester"></label>
+                <select asp-for="Score.Semester" id="ddlSemester" name="ddlSemester" required class="form-select"></select>
+                <span asp-validation-for="Score.Semester" class="text-danger"></span>
+            </div>
+            <div class="mt-4 col-6 text-end">
+                <button type="submit" id="btnSearch" class="btn btn-primary" asp-controller="Score"
+                        asp-action="SearchScoreServer" style="width:150px">
+                    Search
+                </button>
+            </div>
+
+        </div>
+
+        <div id="divDetails" hidden class="mt-5 border-2">
+
+            <div id="divTable" class="border-1">
+                <table id="myTable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Mark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @for (int k = 0; k < Model.Scores.Count; k++)
+                        {
+                            <tr>
+
+                                <td>@Html.TextBoxFor(m => Model.Scores[k].CourseCode, new { @class ="form-control", @readonly="true" } )</td>
+
+                                @if (Model.Scores.Count > 0)
+                                {
+                                    @if (Model.Scores[k].Processed == "p")
+                                    {
+                                        <td>@Html.TextBoxFor(m => m.Scores[k].Mark, new { @class ="form-control", @readonly="true" } )</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@Html.TextBoxFor(m => m.Scores[k].Mark, new { @class ="form-control" } )</td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td>@Html.TextBoxFor(m => m.Scores[k].Mark, new { @class ="form-control" } )</td>
+                                }
+
+                                <td>@Html.TextBoxFor(m => Model.Scores[k].StudNos, new { @hidden="true" } )</td>
+                                <td>@Html.TextBoxFor(m => Model.Scores[k].Level, new { @hidden="true" } )</td>
+                                <td>@Html.TextBoxFor(m => Model.Scores[k].Semester, new { @hidden="true" } )</td>
+                                <td>@Html.TextBoxFor(m => Model.Scores[k].GroupCode, new { @hidden="true" } )</td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+
+            @*<td><input type="text" name="Mark_@k" value="@Model.Scores[k].Mark" /></td>*@
+
+            <div id="divButton" class="text-end">
+
+                @if (Model.Scores.Count > 0)
+                {
+                    @if (Model.Scores[0].Processed == "p")
+                    {
+                        <button type="submit" id="btnSave" class="btn btn-primary" hidden disabled asp-controller="Score" asp-action="SaveScoreServer" style="width:150px">Save</button>
+                    }
+                    else
+                    {
+                        <button type="submit" id="btnSave" class="btn btn-primary" asp-controller="Score" asp-action="SaveScoreServer" style="width:150px">Save</button>
+                    }
+                }
+                else
+                {
+                    <button type="submit" id="btnSave" class="btn btn-primary" asp-controller="Score" asp-action="SaveScoreServer" style="width:150px">Save</button>
+                }
+
+                <a class="btn btn-info" asp-controller="Score" asp-action="IndexServer" style="width:150;">Back to List</a>
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        ddlLevel = $('#ddlLevel')
+        ddlSemester = $('#ddlSemester')
+       
+        loadDropDowns(ddlLevel, "/Enrollment/LoadLevels")
+        loadDropDowns(ddlSemester, "/Enrollment/LoadSemesters")
+
+        var vStudNos = '@(ViewBag.StudNos)'
+        var vLevel = '@(ViewBag.Level)'
+        var vSemester = '@(ViewBag.Semester)'
+
+        //vStudNos, vLevel & vSemester has value if search is invoked with search button on the page
+        if (vStudNos !== '' && vLevel !== '' && vSemester !== '') {
+            $('#txtStudNos').val(vStudNos)
+
+            setTimeout(function () {
+                $('#ddlLevel').val(vLevel)
+                $('#ddlSemester').val(vSemester)
+            }, 200)
+
+            //if no data, hide the detailsdiv
+            kant = $('#myTable tbody tr').length
+            if (kant > 0) {
+                $('#divDetails').attr('hidden', false)
+            }
+            else {
+                $('#divDetails').attr('hidden', true)
+            }
+        }
+
+
+        var hStdNos = $('#txtHidStudNos').val()
+        var hLevel = $('#txtHidLevel').val()
+        var hSemester = $('#txtHidSemester').val()
+        var hGrpCode = $('#txtHidGroupCode').val()
+
+        //hStdNos, hLevel, hSemester, & hGrpCode has value  if page is invoked from IndexServer method
+        if (hStdNos != "" && hLevel != "" && hSemester != "" && hGrpCode != "") {
+            //alert(2)
+            $('#txtStudNos').val(hStdNos)
+
+            setTimeout(function () {
+                $('#ddlLevel').val(hLevel)
+                $('#ddlSemester').val(hSemester)
+            }, 200)
+
+            //if no data, hide the detailsdiv
+            kant = $('#myTable tbody tr').length
+            if (kant > 0) {
+                $('#divDetails').attr('hidden', false)
+            }
+            else {
+                $('#divDetails').attr('hidden', true)
+            }
+        }
+
+    })
+
+
+
+    function loadDropDowns(ddl, dataUrl) {
+        $.ajax({
+            type: "POST",
+            url: dataUrl,
+            success: function (data) {
+                ddl.empty()
+                $.each(data, function () {
+                    //ddl.append($("<option></option>").val(this['value']).html(this['text']));
+                    ddl.append($("<option />").val(this.value).text(this.text));
+                });
+            }
+        })
+
+    }
+
+
+
+</script>

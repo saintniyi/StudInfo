@@ -1,0 +1,60 @@
+﻿@model StudInfoModel.Role
+
+
+@{
+    ViewData["Title"] = "Create / Update Role";
+}
+
+<form method="post">
+
+    <input id="id_hid" asp-for="@Model.Id" hidden />
+
+    <div class="border p-3 mt-3">
+
+        <div class="row mb-5">
+            <h2>Create Role</h2>
+        </div>
+
+        @*<div class="mb-3">
+            <label asp-for="@Model.Id"></label>
+            <input asp-for="@Model.Id" class="form-control" />
+            <span asp-validation-for="@Model.Id" class="text-danger"></span>
+        </div>*@
+
+        <div class="mb-2">
+
+            <label asp-for="@Model.RoleName"></label>
+            <input id="roleName" asp-for="@Model.RoleName" class="form-control" />
+            <span asp-validation-for="@Model.RoleName" class="text-danger"></span>
+
+            @*@if (Model.Id == null)
+            {
+                <label asp-for="@Model.RoleName"></label>
+                <input id="roleName" asp-for="@Model.RoleName" class="form-control" />
+                <span asp-validation-for="@Model.RoleName" class="text-danger"></span>
+            }
+            else
+            {
+                <label asp-for="@Model.RoleName"></label>
+                <input asp-for="@Model.RoleName" class="form-control" />
+                <span asp-validation-for="@Model.RoleName" class="text-danger"></span>
+            }*@
+        </div>
+        <div class="mb-3 text-end">
+            @if (Model.Id == null)
+            {
+                <button type="submit" class="btn btn-primary" asp-controller="Role" asp-action="Upsert" style="width:150px;">Save</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" asp-controller="Role" asp-action="Upsert" style="width:150px;">Update</button>
+            }
+            <a class="btn btn-info" asp-controller="Role" asp-action="Index" style="width:150px;">Back to List</a>
+        </div>
+
+
+    </div>
+</form>
+
+
+

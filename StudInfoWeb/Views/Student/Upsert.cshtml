@@ -1,0 +1,184 @@
+﻿@model StudInfoModel.ViewModels.StudentVM
+
+@{
+    ViewData["Title"] = "Create / Update Student";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form method="post" enctype="multipart/form-data">
+
+    <input id="studId" asp-for="Student.Id" hidden />
+    <input asp-for="Student.PhotoBackupPath" hidden class="form-control" />
+
+    <div class="border p-3 mt-3">
+
+        <div class="row mb-3">
+            @if (Model.Student.Id == 0)
+            {
+                <h2 class="ms-4">Create Student</h2>
+            }
+            else
+            {
+                <h2 class="ms-4">Edit Student</h2>
+            }
+        </div>
+
+        <div class="row">
+            <div class="col-8 ms-4">
+
+                <div class="border ms-2 my-2">
+                    <div class="row">
+
+                        <div class="mb-2">
+                            @if (Model.Student.Id == 0)
+                            {
+                                <label asp-for="Student.StudNos"></label>
+                                <input asp-for="Student.StudNos" class="form-control" />
+                                <span asp-validation-for="Student.StudNos" class="text-danger"></span>
+                            }
+                            else
+                            {
+                                <label asp-for="Student.StudNos"></label>
+                                <input asp-for="Student.StudNos" readonly class="form-control" style="background-color:#F5F5F5" />
+                                <span asp-validation-for="Student.StudNos" class="text-danger"></span>
+                            }
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label asp-for="Student.FirstName"></label>
+                            <input asp-for="Student.FirstName" class="form-control" />
+                            <span asp-validation-for="Student.FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label asp-for="Student.LastName"></label>
+                            <input asp-for="Student.LastName" class="form-control" />
+                            <span asp-validation-for="Student.LastName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label asp-for="Student.Email"></label>
+                            <input asp-for="Student.Email" class="form-control" />
+                            <span asp-validation-for="Student.Email" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label asp-for="Student.PhoneNos"></label>
+                            <input asp-for="Student.PhoneNos" class="form-control" />
+                            <span asp-validation-for="Student.PhoneNos" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-4">
+                            <label asp-for="Student.Sex"></label>
+                            <select asp-for="Student.Sex" asp-items="Html.GetEnumSelectList<@StudInfoModel.Gender>()" class="form-select">
+                                <option value="0" selected disabled>--Select Sex--</option>
+                            </select>
+                            <span asp-validation-for="Student.Sex" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-4">
+                            <label asp-for="Student.DOB"></label>
+                            <input asp-for="Student.DOB" class="form-control" />
+                            <span asp-validation-for="Student.DOB" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-4">
+                            <label asp-for="Student.AdmissionDate"></label>
+                            <input asp-for="Student.AdmissionDate" class="form-control" />
+                            <span asp-validation-for="Student.AdmissionDate" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label asp-for="Student.Pix" class="form-label">Upload pix here</label>
+                            <input asp-for="Student.Pix" class="form-control" type="file" id="formFile">
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label asp-for="Student.DeptCode"></label>
+                            <select asp-for="Student.DeptCode" asp-items="Model.DeptList" class="form-select">
+                                <option value="0" selected disabled>--Select Dept--</option>
+                            </select>
+                            <span asp-validation-for="Student.DeptCode" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label asp-for="Student.DegreeProgramName"></label>
+                            <select asp-for="Student.DegreeProgramName" asp-items="Html.GetEnumSelectList<StudInfoModel.ProgramName>()" class="form-select">
+                                <option value="0" selected disabled>--Select Degree Program Name--</option>
+                            </select>
+                            <span asp-validation-for="Student.DegreeProgramName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label asp-for="Student.DegreeTitleToBeAwarded"></label>
+                            <select asp-for="Student.DegreeTitleToBeAwarded" asp-items="Html.GetEnumSelectList<StudInfoModel.DegreeTitle>()" class="form-select">
+                                <option value="0" selected disabled>--Select Degree Title--</option>
+                            </select>
+                            <span asp-validation-for="Student.DegreeTitleToBeAwarded" class="text-danger"></span>
+                        </div>
+                        
+                        @if (Model.Student.Id > 0)
+                        {
+                            @if (Model.Student.Level > 0)
+                            {
+                                <div class="mb-3 col-6">
+                                    <label asp-for="Student.Level"></label>
+                                    <input asp-for="Student.Level" readonly class="form-control" style="background-color:#F5F5F5" />
+                                    <span asp-validation-for="Student.Level" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3 col-6">
+                                    <label asp-for="Student.Semester"></label>
+                                    <input asp-for="Student.Semester" readonly class="form-control" style="background-color:#F5F5F5" />
+                                    <span asp-validation-for="Student.Semester" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3 col-4">
+                                    <label asp-for="Student.LatestEnrollGrpCode"></label>
+                                    <input asp-for="Student.LatestEnrollGrpCode" readonly class="form-control" style="background-color:#F5F5F5" />
+                                    <span asp-validation-for="Student.LatestEnrollGrpCode" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3 col-4">
+                                    <label asp-for="Student.GPA"></label>
+                                    <input asp-for="Student.GPA" readonly class="form-control" style="background-color:#F5F5F5" />
+                                    <span asp-validation-for="Student.GPA" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3 col-4">
+                                    <label asp-for="Student.CGPA"></label>
+                                    <input asp-for="Student.CGPA" readonly class="form-control" style="background-color:#F5F5F5" />
+                                    <span asp-validation-for="Student.CGPA" class="text-danger"></span>
+                                </div>
+                            }
+                        }
+
+                        <div class="mb-3">
+                            <label asp-for="Student.Remarks"></label>
+                            <input asp-for="Student.Remarks" class="form-control" />
+                            <span asp-validation-for="Student.Remarks" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 mt-3 text-end">
+                            @if (Model.Student.Id == 0)
+                            {
+                                <button type="submit" class="btn btn-primary" asp-controller="Student" asp-action="Upsert" style="width:150px;">Save</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-primary" asp-controller="Student" asp-action="Upsert" style="width:150px;">Update</button>
+                            }
+                            <a class="btn btn-info" asp-controller="Student" asp-action="Index" style="width:150px;">Back to List</a>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-2 ms-4">
+                @*Display existing photo here*@
+                <img class="imageThumbnail" src="@ViewBag.ImageDataUrl" asp-append-version="true" />
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
