@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - StudInfoWeb</title>
     <link rel="stylesheet" href="~/css/bootswatchTheme.css" />
-    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
@@ -20,7 +19,6 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
-                @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>*@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -54,9 +52,7 @@
 
                                 <a class="dropdown-item" asp-area="" asp-controller="Enrollment" asp-action="Index">View Enrollments</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Enrollment" asp-action="AddEnrollmentClient">Course Enrollment</a>
-                                @*<a class="dropdown-item" asp-area="" asp-controller="Enrollment" asp-action="OldEnrol_1">Courses Enrollment Old 1</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Enrollment" asp-action="OldEnrol_2">Courses Enrollment Old 2</a>*@
-
+                                
                                 <div class="dropdown-divider"></div>
 
                                 <a class="dropdown-item" asp-area="" asp-controller="Score" asp-action="Index">View Scores</a>
@@ -119,7 +115,6 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
