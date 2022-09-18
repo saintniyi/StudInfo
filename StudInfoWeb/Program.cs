@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StudInfoDataAccess.Data;
+using StudInfoDataAccess.DbInitializer;
 using StudInfoDataAccess.IRepository;
 using StudInfoDataAccess.Repository;
 using StudInfoModel;
@@ -18,6 +19,7 @@ builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireCo
 
 //builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 builder.Services.AddRazorPages();
 
@@ -54,8 +56,9 @@ app.UseStaticFiles();
 //});
 
 app.UseRouting();
-app.UseAuthentication();;
+RunMigration_SeedDatabase();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
 
@@ -64,3 +67,14 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
+
+void RunMigration_SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}
