@@ -9,6 +9,7 @@
 
     <input id="studId" asp-for="Student.Id" hidden />
     <input asp-for="Student.PhotoBackupPath" hidden class="form-control" />
+    <input asp-for="Student.Pix" hidden class="form-control" type="file" />
 
     <div class="border p-3 mt-3">
 
@@ -81,8 +82,8 @@
                             <span asp-validation-for="Student.AdmissionDate" class="text-danger"></span>
                         </div>
                         <div class="mb-3 col-6">
-                            <label asp-for="Student.Pix" class="form-label">Upload pix here</label>
-                            <input asp-for="Student.Pix" class="form-control" type="file" id="formFile">
+                            <label asp-for="Photo" class="form-label">Upload pix here</label>
+                            <input asp-for="Photo" class="form-control" type="file" id="formFile">
                         </div>
                         <div class="mb-3 col-6">
                             <label asp-for="Student.DeptCode"></label>

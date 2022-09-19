@@ -14,6 +14,8 @@ namespace StudInfoModel.ViewModels
 
         public Student Student { get; set; } = null!;
 
+        public IFormFile? Photo { get; set; }
+
 
         [ValidateNever]
         public IEnumerable<SelectListItem>?  DeptList { get; set; }

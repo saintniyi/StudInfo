@@ -49,7 +49,15 @@ namespace StudInfoWeb.Controllers
                 //this is an update mode, id must have a value
                 studentVM.Student = _uow.Student.GetOne(x => x.Id == id);
 
-                string imageBase64Data = Convert.ToBase64String(studentVM.Student.Pix);
+                if (studentVM.Student == null) return View(studentVM);
+
+                byte[] byteArray = studentVM.Student.Pix;
+                if (byteArray == null)
+                {
+                    byteArray = new byte[0];
+                }
+
+                string imageBase64Data = Convert.ToBase64String(byteArray);
                 string imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64Data);
                 ViewBag.ImageDataUrl = imageDataURL;
 
@@ -69,21 +77,21 @@ namespace StudInfoWeb.Controllers
                 if (studentVM.Student.Id == 0)
                 {
 
-                    if (Request.Form.Files.Count > 0)
+                    if (studentVM.Photo != null)
                     {
-                        var file = Request.Form.Files[0];
+                        //var file = Request.Form.Files[0];
+                        //upload file to image/upload folder and returns filepath
+                        string filepath = uploadFile(studentVM.Photo);
+
 
                         //convert file to byte array
                         using (MemoryStream ms = new MemoryStream())
                         {
-                            file.CopyTo(ms);
+                            studentVM.Photo.CopyTo(ms);
                             studentVM.Student.Pix = ms.ToArray();
                         }
 
-                        //upload file to image/upload folder and returns filepath
-                        string filepath = uploadFile(Request.Form.Files[0]);
-
-
+                       
                         studentVM.Student.PhotoBackupPath = filepath;
 
                     }
@@ -94,9 +102,9 @@ namespace StudInfoWeb.Controllers
                 }
                 else
                 {
-                    if (Request.Form.Files.Count > 0)
+                    if (studentVM.Photo != null)
                     {
-                        var file = Request.Form.Files[0];
+                        //var file = Request.Form.Files[0];
                         if (!string.IsNullOrEmpty(studentVM.Student.PhotoBackupPath))
                         {
                             string existingFilePath = studentVM.Student.PhotoBackupPath;
@@ -104,12 +112,12 @@ namespace StudInfoWeb.Controllers
                         }
 
                         //upload file to image/upload folder and returns new filepath
-                        string filepath = uploadFile(Request.Form.Files[0]);
+                        string filepath = uploadFile(studentVM.Photo);
 
                         //convert file to byte array
                         using (MemoryStream ms = new MemoryStream())
                         {
-                            file.CopyTo(ms);
+                            studentVM.Photo.CopyTo(ms);
                             studentVM.Student.Pix = ms.ToArray();
                         }
 
@@ -176,7 +184,13 @@ namespace StudInfoWeb.Controllers
 
                 if (studentVM.Student != null)
                 {
-                    string imageBase64Data = Convert.ToBase64String(studentVM.Student.Pix);
+                    byte[] byteArray = studentVM.Student.Pix;
+                    if (byteArray == null)
+                    {
+                        byteArray = new byte[0];
+                    }
+
+                    string imageBase64Data = Convert.ToBase64String(byteArray);
                     string imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64Data);
                     ViewBag.ImageDataUrl = imageDataURL;
 
